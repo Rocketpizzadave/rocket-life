@@ -1131,7 +1131,7 @@ function initSnake(){
 
   function step(){
     if(paused)return;dir=nd;
-    const h={(x:(snake[0].x+dir.x+cols)%cols),(y:(snake[0].y+dir.y+rows)%rows)};
+    const h={x:(snake[0].x+dir.x+cols)%cols,y:(snake[0].y+dir.y+rows)%rows};
     if(snake.some(s=>s.x===h.x&&s.y===h.y)){
       clearInterval(snk.iv);
       ctx.fillStyle='rgba(8,8,16,.75)';ctx.fillRect(0,0,cv.width,cv.height);
