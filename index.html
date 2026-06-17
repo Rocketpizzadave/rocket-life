@@ -33,6 +33,18 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   padding:56px 24px 28px;
   display:flex;flex-direction:column;
   align-items:flex-start;
+  position:relative;
+}
+
+.rocket-mascot{
+  position:absolute;
+  right:-15px;
+  top:-10px;
+  width:200px;
+  height:auto;
+  opacity:0.22;
+  pointer-events:none;
+  filter:saturate(0.8);
 }
 
 .hero-eyebrow{
@@ -378,6 +390,7 @@ body.light{
 <div id="home" class="screen active">
 <div class="home-inner">
   <div class="home-hero">
+    <img class="rocket-mascot" src="rocket.png" alt="">
     <div class="hero-eyebrow">Sistema personal</div>
     <div class="hero-logo">ROCKET<span>LIFE</span></div>
     <div class="hero-date" id="homeDate">—</div>
