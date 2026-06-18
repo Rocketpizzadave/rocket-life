@@ -22,154 +22,103 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .screen{display:none;flex-direction:column;min-height:100vh}
 .screen.active{display:flex}
 
-/* HOME — ROCKET HERO */
-#home{position:relative;overflow:hidden;background:#05050e;padding-bottom:90px;min-height:100vh}
+/* HOME — REDESIGNED */
+#home{position:fixed;inset:0;overflow:hidden;background:#05050e}
 
 #starfield{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 
-.home-inner{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh}
-
-/* Hero con cohete centrado */
-.home-hero{
-  position:relative;
-  display:flex;flex-direction:column;align-items:center;
-  padding:48px 0 0;
-  min-height:340px;
-}
-
-.rocket-bg{
+.rocket-hero{
   position:absolute;
   left:50%;transform:translateX(-50%);
-  top:0;
-  width:280px;height:auto;
-  opacity:0.55;
+  bottom:-8px;
+  height:90vh;width:auto;
+  opacity:0.78;
   pointer-events:none;
-  filter:drop-shadow(0 0 40px rgba(139,92,246,.3));
-  z-index:0;
+  filter:drop-shadow(0 0 55px rgba(139,92,246,.5)) drop-shadow(0 0 120px rgba(139,92,246,.18));
+  z-index:1;
 }
 
-.hero-content{
-  position:relative;z-index:2;
+.home-content{
+  position:absolute;inset:0;z-index:2;
   display:flex;flex-direction:column;align-items:center;
-  padding-top:8px;
+  justify-content:space-between;
+  padding:52px 22px 36px;
 }
 
-.hero-eyebrow{
-  font-size:10px;color:rgba(255,255,255,.4);letter-spacing:3px;
-  text-transform:uppercase;margin-bottom:8px;
-  display:flex;align-items:center;gap:8px;
-}
-.hero-eyebrow::before{content:'';width:20px;height:1px;background:rgba(255,255,255,.2)}
-.hero-eyebrow::after{content:'';width:20px;height:1px;background:rgba(255,255,255,.2)}
-
-.hero-logo{
+/* Logo */
+.home-logo{text-align:center}
+.logo-text{
   font-family:'Space Mono',monospace;
-  font-size:36px;font-weight:700;letter-spacing:-2px;line-height:1;
+  font-size:30px;font-weight:700;letter-spacing:-1.5px;line-height:1;
   color:var(--accent);
-  text-shadow:0 0 30px rgba(232,255,71,.4);
-  text-align:center;
+  text-shadow:0 0 28px rgba(232,255,71,.55),0 0 60px rgba(232,255,71,.2);
 }
-.hero-logo span{color:rgba(255,255,255,.25)}
+.logo-text span{color:rgba(255,255,255,.25)}
+.logo-date{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-top:5px}
 
-.hero-date{
-  margin-top:6px;font-size:11px;color:rgba(255,255,255,.3);
-  letter-spacing:2px;text-transform:uppercase;text-align:center;
-}
+/* Hero buttons row */
+.hero-btns{display:flex;gap:12px;width:100%}
 
-/* Score ring compacto */
-.score-ring-wrap{
-  margin:200px 20px 0;
-  background:rgba(15,15,26,.85);
-  backdrop-filter:blur(12px);
-  border:1px solid rgba(139,92,246,.2);border-radius:18px;
-  padding:14px 18px;
-  display:flex;align-items:center;gap:16px;
-  position:relative;z-index:2;
+.hero-btn{
+  flex:1;
+  aspect-ratio:1/1;
+  border-radius:22px;
+  border:1px solid;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;cursor:pointer;font-family:inherit;
+  transition:transform .15s;
+  -webkit-tap-highlight-color:transparent;
+  background:none;
 }
-.score-ring{position:relative;width:64px;height:64px;flex-shrink:0}
-.score-ring svg{transform:rotate(-90deg)}
-.score-ring-num{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-}
-.score-ring-num span:first-child{
-  font-family:'Space Mono',monospace;font-size:18px;font-weight:700;
-  color:var(--accent);line-height:1;
-}
-.score-ring-num span:last-child{font-size:8px;color:var(--text3)}
-.score-ring-info{flex:1}
-.score-ring-label{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
-.score-ring-bar{height:3px;background:var(--s3);border-radius:2px;overflow:hidden;margin-bottom:5px}
-.score-ring-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--accent));border-radius:2px;transition:width .5s ease}
-.score-ring-msg{font-size:11px;color:var(--text2);line-height:1.4}
+.hero-btn:active{transform:scale(.91)}
 
-/* Main cards */
-.main-cards{
-  padding:10px 20px 0;
-  display:flex;flex-direction:column;
-  gap:10px;flex:1;
-  position:relative;z-index:2;
-}
+.btn-diet{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.45)}
+.btn-train{background:rgba(249,115,22,.16);border-color:rgba(249,115,22,.45)}
+.btn-mind{background:rgba(56,189,248,.16);border-color:rgba(56,189,248,.45)}
 
-.main-card{
-  border-radius:18px;padding:0;cursor:pointer;
-  transition:transform .15s,box-shadow .15s;
-  position:relative;overflow:hidden;
-  border:none;width:100%;font-family:inherit;text-align:left;
-  min-height:80px;
-  backdrop-filter:blur(8px);
-}
-.main-card:active{transform:scale(.975)}
+.btn-icon{font-size:27px;line-height:1}
+.btn-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.btn-diet .btn-label{color:#4ade80}
+.btn-train .btn-label{color:#fb923c}
+.btn-mind .btn-label{color:#38bdf8}
+.btn-pct{font-family:'Space Mono',monospace;font-size:14px;font-weight:700}
+.btn-diet .btn-pct{color:rgba(74,222,128,.9)}
+.btn-train .btn-pct{color:rgba(251,146,60,.9)}
+.btn-mind .btn-pct{color:rgba(56,189,248,.9)}
 
-.main-card.diet{background:rgba(13,31,20,.9);border:1px solid rgba(34,197,94,.25)}
-.main-card.train{background:rgba(19,13,31,.9);border:1px solid rgba(139,92,246,.25)}
-.main-card.mind{background:rgba(31,21,13,.9);border:1px solid rgba(249,115,22,.25)}
-
-.main-card::after{
-  content:'';position:absolute;right:-20px;top:-20px;
-  width:90px;height:90px;border-radius:50%;opacity:.07;
+/* Home footer */
+.home-footer{width:100%;display:flex;align-items:flex-end;gap:14px}
+.day-progress{flex:1}
+.day-progress-label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:10px;color:rgba(255,255,255,.35);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;
 }
-.main-card.diet::after{background:var(--green)}
-.main-card.train::after{background:var(--purple)}
-.main-card.mind::after{background:var(--orange)}
-
-.card-inner{padding:18px 20px;display:flex;align-items:center;gap:14px}
-.card-glyph{font-size:32px;line-height:1;flex-shrink:0}
-.card-text{flex:1}
-.card-title{font-size:17px;font-weight:700;margin-bottom:3px}
-.main-card.diet .card-title{color:#4ade80}
-.main-card.train .card-title{color:#a78bfa}
-.main-card.mind .card-title{color:#fb923c}
-.card-desc{font-size:11px;color:var(--text2);line-height:1.4}
-.card-badge{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;flex-shrink:0}
-.main-card.diet .card-badge{color:#4ade80}
-.main-card.train .card-badge{color:#a78bfa}
-.main-card.mind .card-badge{color:#fb923c}
-
-/* Bottom bar */
-.home-bottom{
-  padding:10px 20px 6px;
-  display:flex;gap:10px;
-  position:relative;z-index:2;
+.day-progress-score{
+  font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--accent);
 }
-.home-backup-btn{
-  flex:1;padding:11px;background:rgba(15,15,26,.8);
-  backdrop-filter:blur(8px);
-  border:1px solid var(--border);
-  border-radius:12px;color:var(--text2);font-family:inherit;font-size:12px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
-  transition:all .15s;
+.day-progress-track{
+  height:4px;background:rgba(255,255,255,.08);
+  border-radius:2px;overflow:hidden;margin-bottom:5px;
 }
-.home-backup-btn:active{border-color:var(--accent);color:var(--accent)}
-.home-config-btn{
-  width:46px;height:46px;border-radius:12px;
-  background:rgba(15,15,26,.8);backdrop-filter:blur(8px);
-  border:1px solid var(--border);
-  color:var(--text2);font-size:19px;cursor:pointer;
+.day-progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--purple),var(--accent));
+  border-radius:2px;transition:width .5s ease;width:0%;
+}
+.day-progress-msg{font-size:11px;color:rgba(255,255,255,.25)}
+
+.settings-btn{
+  width:48px;height:48px;border-radius:50%;flex-shrink:0;
+  background:rgba(15,15,26,.75);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1);
+  color:var(--text2);font-size:20px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:all .15s;
 }
-.home-config-btn:active{background:var(--purple);border-color:var(--purple);color:#fff}
+.settings-btn:active{background:var(--purple);border-color:var(--purple);color:#fff}
 
 /* CONFIG OVERLAY */
 #config-overlay{
@@ -261,6 +210,69 @@ body.light{
 .s-btn.g{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green)}
 .s-btn.o{background:rgba(249,115,22,.15);border-color:var(--orange);color:var(--orange)}
 .s-btn.r{background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red)}
+
+/* DIET MODE TOGGLE */
+.diet-mode-toggle{display:flex;gap:6px;margin-top:10px}
+.diet-mode-btn{flex:1;padding:7px 0;border-radius:10px;border:1px solid var(--border);background:var(--s2);color:var(--text2);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.diet-mode-btn.active{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+
+/* REAL MODE */
+.real-content{padding:14px 20px 100px;display:flex;flex-direction:column;gap:12px}
+.real-total-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:15px}
+.real-total-title{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.real-macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.real-macro-cell{text-align:center}
+.real-macro-val{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;line-height:1}
+.real-macro-lbl{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.real-macro-target{font-size:10px;color:var(--text3);margin-top:2px;font-family:'Space Mono',monospace}
+.real-progress-bar{margin-top:10px;height:3px;background:var(--s3);border-radius:2px;overflow:hidden}
+.real-progress-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.real-slot-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.real-slot-head{padding:13px 15px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.real-slot-name{flex:1;font-size:14px;font-weight:600}
+.real-slot-kcal{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent)}
+.real-slot-body{padding:0 15px 14px}
+.real-slot-body.hidden{display:none}
+.real-food-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.real-food-row:last-child{border-bottom:none}
+.real-food-info{flex:1;min-width:0}
+.real-food-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.real-food-macros{font-size:11px;color:var(--text2);margin-top:1px;font-family:'Space Mono',monospace}
+.real-food-grams{width:54px;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:13px;font-weight:700;text-align:center;padding:5px 3px;-webkit-appearance:none}
+.real-food-grams:focus{outline:none;border-color:var(--purple)}
+.real-food-del{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.real-food-del:active{background:var(--red);border-color:var(--red);color:#fff}
+.real-search-bar{display:flex;gap:7px;margin-top:11px}
+.real-search-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:9px 12px;-webkit-appearance:none}
+.real-search-input:focus{outline:none;border-color:var(--purple)}
+.real-search-input::placeholder{color:var(--text3)}
+.real-icon-btn{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--s2);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.real-icon-btn:active{background:var(--purple);border-color:var(--purple);color:#fff}
+.real-results{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.real-result-item{padding:9px 11px;background:var(--s2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s}
+.real-result-item.sel,.real-result-item:active{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.4)}
+.real-result-name{font-size:13px;font-weight:500;line-height:1.3}
+.real-result-meta{font-size:11px;color:var(--text2);margin-top:2px;font-family:'Space Mono',monospace}
+.real-add-row{display:flex;gap:8px;align-items:center;margin-top:8px;padding:10px 12px;background:rgba(232,255,71,.05);border:1px solid rgba(232,255,71,.2);border-radius:10px;flex-wrap:wrap}
+.real-add-label{font-size:11px;color:var(--text2);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.real-gram-input{width:64px;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:15px;font-weight:700;text-align:center;padding:7px 4px;-webkit-appearance:none}
+.real-gram-input:focus{outline:none;border-color:var(--accent)}
+.real-add-btn{padding:7px 14px;background:var(--accent);border:none;border-radius:8px;color:var(--bg);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+.real-add-btn:active{opacity:.8}
+.real-status{padding:10px;text-align:center;font-size:12px;color:var(--text3)}
+
+/* SCAN MODAL */
+#scan-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:900;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}
+#scan-modal.active{display:flex}
+.scan-title{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:2px}
+#scan-video{width:min(86vw,360px);height:min(86vw,360px);border-radius:14px;object-fit:cover;border:2px solid rgba(139,92,246,.5);background:#000}
+.scan-hint{font-size:12px;color:rgba(255,255,255,.4);text-align:center;max-width:320px}
+.scan-fallback-row{display:flex;gap:8px;align-items:center;background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:10px 14px;width:min(86vw,360px)}
+.scan-fallback-input{flex:1;background:none;border:none;color:var(--text);font-family:'Space Mono',monospace;font-size:15px}
+.scan-fallback-input:focus{outline:none}
+.scan-fallback-input::placeholder{color:var(--text3);font-size:12px;font-family:inherit}
+.scan-ok-btn{padding:7px 16px;background:var(--accent);border:none;border-radius:8px;color:var(--bg);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.scan-close-btn{padding:10px 28px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-family:inherit;font-size:13px;cursor:pointer}
 
 /* TRAIN */
 .day-selector{padding:10px 20px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
@@ -382,82 +394,43 @@ body.light{
 
 <!-- HOME -->
 <div id="home" class="screen active">
-<div class="home-inner">
-  <div class="home-hero">
-    <img class="rocket-bg" src="rocket.png" alt="">
-    <div class="hero-content">
-      <div class="hero-eyebrow">Sistema personal</div>
-      <div class="hero-logo">ROCKET<span>LIFE</span></div>
-      <div class="hero-date" id="homeDate">—</div>
+  <img class="rocket-hero" src="rocket.png" alt="">
+  <div class="home-content">
+    <div class="home-logo">
+      <div class="logo-text">ROCKET<span>LIFE</span></div>
+      <div class="logo-date" id="homeDate">—</div>
+    </div>
+    <div class="hero-btns">
+      <button class="hero-btn btn-diet" onclick="showScreen('diet')">
+        <div class="btn-icon">🥩</div>
+        <div class="btn-label">Dieta</div>
+        <div class="btn-pct" id="dietPct">0%</div>
+      </button>
+      <button class="hero-btn btn-train" onclick="showScreen('train')">
+        <div class="btn-icon">🏋️</div>
+        <div class="btn-label">Entreno</div>
+        <div class="btn-pct" id="trainPct">—</div>
+      </button>
+      <button class="hero-btn btn-mind" onclick="showScreen('mind')">
+        <div class="btn-icon">🧠</div>
+        <div class="btn-label">Hábitos</div>
+        <div class="btn-pct" id="mindPct">0%</div>
+      </button>
+    </div>
+    <div class="home-footer">
+      <div class="day-progress">
+        <div class="day-progress-label">
+          <span>Progreso del día</span>
+          <span class="day-progress-score"><span id="scoreNum">0</span>/100</span>
+        </div>
+        <div class="day-progress-track">
+          <div class="day-progress-fill" id="scoreBar"></div>
+        </div>
+        <div class="day-progress-msg" id="scoreMsg">Empieza el día. Tómate el café.</div>
+      </div>
+      <button class="settings-btn" onclick="openConfig()">⚙️</button>
     </div>
   </div>
-
-  <div class="score-ring-wrap">
-    <div class="score-ring">
-      <svg width="72" height="72" viewBox="0 0 72 72">
-        <circle cx="36" cy="36" r="30" fill="none" stroke="#1e1e30" stroke-width="6"/>
-        <circle cx="36" cy="36" r="30" fill="none" stroke="url(#rg)" stroke-width="6"
-          stroke-linecap="round" stroke-dasharray="188.5"
-          stroke-dashoffset="188.5" id="ringPath" style="transition:stroke-dashoffset .6s ease"/>
-        <defs>
-          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#8b5cf6"/>
-            <stop offset="100%" stop-color="#e8ff47"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div class="score-ring-num">
-        <span id="scoreNum">0</span>
-        <span>/100</span>
-      </div>
-    </div>
-    <div class="score-ring-info">
-      <div class="score-ring-label">Puntuación del día</div>
-      <div class="score-ring-bar"><div class="score-ring-fill" id="scoreBar" style="width:0%"></div></div>
-      <div class="score-ring-msg" id="scoreMsg">Empieza el día. Tómate el café.</div>
-    </div>
-  </div>
-
-  <div class="main-cards">
-    <button class="main-card diet" onclick="showScreen('diet')">
-      <div class="card-inner">
-        <div class="card-glyph">🥩</div>
-        <div class="card-text">
-          <div class="card-title">Dieta</div>
-          <div class="card-desc">Comidas · Suplementos · Checklist</div>
-        </div>
-        <div class="card-badge" id="dietPct">0%</div>
-      </div>
-    </button>
-
-    <button class="main-card train" onclick="showScreen('train')">
-      <div class="card-inner">
-        <div class="card-glyph">🏋️</div>
-        <div class="card-text">
-          <div class="card-title">Entreno</div>
-          <div class="card-desc">Rutina · Series · Cronómetro · Snake</div>
-        </div>
-        <div class="card-badge" id="trainPct">—</div>
-      </div>
-    </button>
-
-    <button class="main-card mind" onclick="showScreen('mind')">
-      <div class="card-inner">
-        <div class="card-glyph">🧠</div>
-        <div class="card-text">
-          <div class="card-title">Hábitos</div>
-          <div class="card-desc">Sueño · Suplementos · Racha cannabis</div>
-        </div>
-        <div class="card-badge" id="mindPct">0%</div>
-      </div>
-    </button>
-  </div>
-
-  <div class="home-bottom">
-    <button class="home-backup-btn" onclick="doBackup()">💾 Backup JSON</button>
-    <button class="home-config-btn" onclick="openConfig()">⚙️</button>
-  </div>
-</div>
 </div>
 
 <!-- CONFIG OVERLAY -->
@@ -529,10 +502,15 @@ body.light{
 <div id="diet" class="screen">
   <div class="screen-header">
     <button class="back-btn" onclick="showScreen('home')">← Volver</button>
-    <div class="screen-title">🥩 Dieta de hoy</div>
-    <div class="screen-sub">~1950 kcal · ~155g proteína</div>
+    <div class="screen-title">🥩 Dieta</div>
+    <div class="screen-sub">1950 kcal · 155g proteína</div>
+    <div class="diet-mode-toggle">
+      <button class="diet-mode-btn active" id="btnPlan" onclick="setDietMode('plan')">Plan</button>
+      <button class="diet-mode-btn" id="btnReal" onclick="setDietMode('real')">Real</button>
+    </div>
   </div>
-  <div class="diet-content" id="dietContent"></div>
+  <div id="planMode"><div class="diet-content" id="dietContent"></div></div>
+  <div id="realMode" style="display:none"><div id="realContent"></div></div>
 </div>
 
 <!-- TRAIN -->
@@ -610,6 +588,20 @@ body.light{
   <div class="done-stats" id="doneStats"></div>
   <div class="done-prs" id="donePRs" style="display:none"></div>
   <button class="done-btn" onclick="closeDone()">Ver inicio</button>
+</div>
+
+<!-- SCAN MODAL -->
+<div id="scan-modal">
+  <div class="scan-title">ESCÁNER DE CÓDIGO</div>
+  <video id="scan-video" playsinline muted></video>
+  <div class="scan-hint" id="scan-hint">Iniciando cámara…</div>
+  <div class="scan-fallback-row" id="scan-fallback-row" style="display:none">
+    <input type="number" class="scan-fallback-input" id="scan-barcode-input"
+      placeholder="Código de barras…" inputmode="numeric"
+      onkeydown="if(event.key==='Enter')submitManualBarcode()">
+    <button class="scan-ok-btn" onclick="submitManualBarcode()">OK</button>
+  </div>
+  <button class="scan-close-btn" onclick="closeScan()">✕ Cerrar</button>
 </div>
 
 <!-- NAV -->
@@ -885,6 +877,286 @@ function selFood(mealId,oi,fi){
 }
 
 function setSupp(id,val){setKey('supps',id,val);renderDiet();updateScore();}
+
+// ═══ REAL MODE ═══
+
+const GOALS={kcal:1950,prot:155,carbs:200,fat:58};
+const realState={mode:'plan',results:{},selected:{},openSlots:{c1:true,c2:false,c3:false},searchVals:{},pendingGrams:{}};
+
+function setDietMode(mode){
+  realState.mode=mode;
+  document.getElementById('planMode').style.display=mode==='plan'?'block':'none';
+  document.getElementById('realMode').style.display=mode==='real'?'block':'none';
+  document.getElementById('btnPlan').classList.toggle('active',mode==='plan');
+  document.getElementById('btnReal').classList.toggle('active',mode==='real');
+  if(mode==='real')renderReal();
+}
+
+function getRealDay(){
+  const d=load(),t=today();
+  if(!d.days[t])d.days[t]={meals:{},supps:{},habits:{}};
+  if(!d.days[t].real)d.days[t].real={c1:[],c2:[],c3:[]};
+  return d;
+}
+
+function getSlotFoods(slot){return getRealDay().days[today()].real[slot]||[];}
+
+function saveSlot(slot,foods){
+  const d=getRealDay();d.days[today()].real[slot]=foods;save(d);
+}
+
+function calcFoodMacros(foods){
+  return foods.reduce((a,f)=>{
+    const r=f.grams/100;
+    a.kcal+=Math.round(f.kcal100*r);
+    a.prot+=f.prot100*r;
+    a.carbs+=f.carbs100*r;
+    a.fat+=f.fat100*r;
+    return a;
+  },{kcal:0,prot:0,carbs:0,fat:0});
+}
+
+function calcDayTotal(){
+  const r=getRealDay().days[today()].real;
+  return calcFoodMacros([...(r.c1||[]),...(r.c2||[]),...(r.c3||[])]);
+}
+
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderReal(){
+  const cont=document.getElementById('realContent');
+  if(!cont)return;
+  // Preserve transient input state
+  ['c1','c2','c3'].forEach(s=>{
+    const si=document.getElementById('rsearch-'+s);if(si)realState.searchVals[s]=si.value;
+    const gi=document.getElementById('rgrams-'+s);if(gi)realState.pendingGrams[s]=gi.value;
+  });
+  cont.className='real-content';
+  const tot=calcDayTotal();
+  const kcalPct=Math.min(100,Math.round(tot.kcal/GOALS.kcal*100));
+  const kcalColor=tot.kcal>GOALS.kcal*1.05?'var(--red)':'var(--green)';
+  let h=`<div class="real-total-card">
+    <div class="real-total-title">Total del día</div>
+    <div class="real-macro-grid">
+      <div class="real-macro-cell"><div class="real-macro-val" style="color:var(--accent)">${tot.kcal}</div><div class="real-macro-lbl">Kcal</div><div class="real-macro-target">/ ${GOALS.kcal}</div></div>
+      <div class="real-macro-cell"><div class="real-macro-val" style="color:#a78bfa">${Math.round(tot.prot*10)/10}</div><div class="real-macro-lbl">Prot g</div><div class="real-macro-target">/ ${GOALS.prot}</div></div>
+      <div class="real-macro-cell"><div class="real-macro-val" style="color:var(--blue)">${Math.round(tot.carbs*10)/10}</div><div class="real-macro-lbl">Carbs g</div><div class="real-macro-target">/ ${GOALS.carbs}</div></div>
+      <div class="real-macro-cell"><div class="real-macro-val" style="color:var(--orange)">${Math.round(tot.fat*10)/10}</div><div class="real-macro-lbl">Grasa g</div><div class="real-macro-target">/ ${GOALS.fat}</div></div>
+    </div>
+    <div class="real-progress-bar"><div class="real-progress-fill" style="width:${kcalPct}%;background:${kcalColor}"></div></div>
+  </div>`;
+
+  ['c1','c2','c3'].forEach((slot,i)=>{
+    const foods=getSlotFoods(slot);
+    const m=calcFoodMacros(foods);
+    const isOpen=realState.openSlots[slot];
+    const results=realState.results[slot]||[];
+    const sel=realState.selected[slot];
+    const sv=realState.searchVals[slot]||'';
+    const pg=realState.pendingGrams[slot]||'100';
+
+    const foodsHtml=foods.map((f,fi)=>{
+      const r=f.grams/100;
+      return`<div class="real-food-row">
+        <div class="real-food-info">
+          <div class="real-food-name">${escH(f.name)}</div>
+          <div class="real-food-macros">${Math.round(f.kcal100*r)} kcal · ${Math.round(f.prot100*r*10)/10}g prot</div>
+        </div>
+        <input type="number" class="real-food-grams" value="${f.grams}" min="1" max="2000" inputmode="numeric"
+          onchange="updateGrams('${slot}',${fi},this.value)">
+        <button class="real-food-del" onclick="removeFood('${slot}',${fi})">✕</button>
+      </div>`;
+    }).join('');
+
+    const resultsHtml=results.slice(0,6).map((p,ri)=>{
+      const n=p.nutriments||{};
+      const rk=Math.round(n['energy-kcal_100g']||n['energy-kcal']||(n['energy_100g']||0)/4.184||0);
+      const rp=Math.round((n.proteins_100g||0)*10)/10;
+      const isSel=sel&&sel._idx===ri;
+      return`<div class="real-result-item${isSel?' sel':''}" onclick="selectResult('${slot}',${ri})">
+        <div class="real-result-name">${escH(p.product_name||'Sin nombre')}</div>
+        <div class="real-result-meta">${escH(p.brands||'')} · ${rk} kcal/100g · ${rp}g prot</div>
+      </div>`;
+    }).join('');
+
+    const addHtml=sel?`<div class="real-add-row">
+      <div class="real-add-label">${escH(sel.product_name)} · ${Math.round(sel.nutriments?.['energy-kcal_100g']||sel.nutriments?.['energy-kcal']||0)} kcal/100g</div>
+      <input type="number" class="real-gram-input" id="rgrams-${slot}" value="${escH(pg)}" min="1" max="2000" inputmode="numeric" placeholder="g">
+      <button class="real-add-btn" onclick="addFood('${slot}')">+ Añadir</button>
+    </div>`:'';
+
+    h+=`<div class="real-slot-card">
+      <div class="real-slot-head" onclick="toggleRealSlot('${slot}')">
+        <span class="real-slot-name">Comida ${i+1}</span>
+        <span class="real-slot-kcal">${m.kcal>0?m.kcal+' kcal':'—'}</span>
+      </div>
+      <div class="real-slot-body${isOpen?'':' hidden'}" id="rsb-${slot}">
+        ${foodsHtml}
+        <div class="real-search-bar">
+          <input type="text" class="real-search-input" id="rsearch-${slot}"
+            placeholder="Buscar alimento…" value="${escH(sv)}"
+            onkeydown="if(event.key==='Enter')searchFood('${slot}')"
+            autocomplete="off" autocorrect="off" spellcheck="false">
+          <button class="real-icon-btn" onclick="searchFood('${slot}')">🔍</button>
+          <button class="real-icon-btn" onclick="startScan('${slot}')">📷</button>
+        </div>
+        <div class="real-results" id="rres-${slot}">${resultsHtml}</div>
+        ${addHtml}
+      </div>
+    </div>`;
+  });
+
+  cont.innerHTML=h;
+}
+
+function toggleRealSlot(slot){
+  realState.openSlots[slot]=!realState.openSlots[slot];
+  const b=document.getElementById('rsb-'+slot);
+  if(b)b.classList.toggle('hidden',!realState.openSlots[slot]);
+}
+
+async function searchFood(slot){
+  const inp=document.getElementById('rsearch-'+slot);
+  const q=(inp?.value||'').trim();
+  if(!q)return;
+  realState.searchVals[slot]=q;
+  const cont=document.getElementById('rres-'+slot);
+  if(cont)cont.innerHTML='<div class="real-status">Buscando…</div>';
+  delete realState.selected[slot];
+  try{
+    const r=await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&lc=es&cc=es&page_size=10');
+    const data=await r.json();
+    const prods=(data.products||[]).filter(p=>p.product_name&&p.nutriments&&
+      (p.nutriments['energy-kcal_100g']||p.nutriments['energy-kcal']||p.nutriments['energy_100g']));
+    realState.results[slot]=prods;
+    if(!prods.length){
+      if(cont)cont.innerHTML='<div class="real-status">Sin resultados con datos nutricionales</div>';
+      return;
+    }
+    renderReal();
+  }catch(e){
+    if(cont)cont.innerHTML='<div class="real-status">Error de red. Inténtalo de nuevo.</div>';
+  }
+}
+
+function selectResult(slot,idx){
+  const p=realState.results[slot]?.[idx];
+  if(!p)return;
+  p._idx=idx;
+  realState.selected[slot]=p;
+  realState.pendingGrams[slot]='100';
+  renderReal();
+  setTimeout(()=>{const g=document.getElementById('rgrams-'+slot);if(g){g.focus();g.select();}},60);
+}
+
+function addFood(slot){
+  const p=realState.selected[slot];if(!p)return;
+  const gi=document.getElementById('rgrams-'+slot);
+  const grams=parseFloat(gi?.value)||100;
+  if(grams<=0)return;
+  const n=p.nutriments||{};
+  const food={
+    name:p.product_name,brand:p.brands||'',
+    kcal100:Math.round(n['energy-kcal_100g']||n['energy-kcal']||(n['energy_100g']||0)/4.184||0),
+    prot100:parseFloat(n.proteins_100g||0),
+    carbs100:parseFloat(n.carbohydrates_100g||0),
+    fat100:parseFloat(n.fat_100g||n.fat||0),
+    grams
+  };
+  const foods=getSlotFoods(slot);
+  foods.push(food);
+  saveSlot(slot,foods);
+  delete realState.selected[slot];
+  realState.results[slot]=[];
+  realState.searchVals[slot]='';
+  delete realState.pendingGrams[slot];
+  renderReal();
+  showToast('✅ '+food.name+' añadido');
+}
+
+function removeFood(slot,idx){
+  const foods=getSlotFoods(slot);
+  foods.splice(idx,1);
+  saveSlot(slot,foods);
+  renderReal();
+}
+
+function updateGrams(slot,idx,val){
+  const grams=parseFloat(val);
+  if(!grams||grams<=0)return;
+  const foods=getSlotFoods(slot);
+  if(foods[idx]){foods[idx].grams=grams;saveSlot(slot,foods);renderReal();}
+}
+
+// ─── BARCODE SCANNER ───
+let scanTarget=null,scanStream=null,scanScanInterval=null;
+
+async function startScan(slot){
+  scanTarget=slot;
+  const modal=document.getElementById('scan-modal');
+  modal.classList.add('active');
+  const video=document.getElementById('scan-video');
+  const hint=document.getElementById('scan-hint');
+  const fallback=document.getElementById('scan-fallback-row');
+  video.style.display='block';
+  fallback.style.display='none';
+  hint.textContent='Iniciando cámara…';
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}});
+    video.srcObject=scanStream;
+    await video.play();
+    if('BarcodeDetector' in window){
+      hint.textContent='Apunta al código de barras del producto';
+      const det=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']});
+      scanScanInterval=setInterval(async()=>{
+        try{
+          const codes=await det.detect(video);
+          if(codes.length){closeScan();lookupBarcode(codes[0].rawValue,slot);}
+        }catch(e){}
+      },400);
+    }else{
+      hint.textContent='Introduce el código manualmente';
+      fallback.style.display='flex';
+    }
+  }catch(e){
+    video.style.display='none';
+    hint.textContent='Sin acceso a cámara';
+    fallback.style.display='flex';
+  }
+}
+
+function closeScan(){
+  if(scanScanInterval){clearInterval(scanScanInterval);scanScanInterval=null;}
+  if(scanStream){scanStream.getTracks().forEach(t=>t.stop());scanStream=null;}
+  document.getElementById('scan-modal').classList.remove('active');
+  document.getElementById('scan-fallback-row').style.display='none';
+  document.getElementById('scan-barcode-input').value='';
+}
+
+function submitManualBarcode(){
+  const val=document.getElementById('scan-barcode-input').value.trim();
+  if(!val)return;
+  const slot=scanTarget;
+  closeScan();
+  lookupBarcode(val,slot);
+}
+
+async function lookupBarcode(barcode,slot){
+  showToast('Buscando producto…');
+  try{
+    const r=await fetch('https://world.openfoodfacts.org/api/v0/product/'+barcode+'.json');
+    const data=await r.json();
+    if(data.status===1&&data.product?.product_name){
+      const p=data.product;p._idx=0;
+      realState.results[slot]=[p];
+      realState.selected[slot]=p;
+      realState.pendingGrams[slot]='100';
+      realState.openSlots[slot]=true;
+      renderReal();
+      setTimeout(()=>{const g=document.getElementById('rgrams-'+slot);if(g){g.focus();g.select();}},100);
+    }else{showToast('Producto no encontrado','or');}
+  }catch(e){showToast('Error al buscar producto','or');}
+}
 
 // ═══ TRAIN ═══
 
@@ -1174,8 +1446,9 @@ function showScreen(id){
   document.getElementById(id).classList.add('active');
   const map={home:0,diet:1,train:2,mind:3};
   document.querySelectorAll('.nav-item').forEach((n,i)=>n.classList.toggle('active',i===map[id]));
+  document.querySelector('.bottom-nav').style.display=id==='home'?'none':'flex';
   if(id==='home')updateScore();
-  if(id==='diet')renderDiet();
+  if(id==='diet'){renderDiet();setDietMode(realState.mode||'plan');}
   if(id==='train'){renderDaySel();renderExercises();}
   if(id==='mind')renderMind();
 }
@@ -1271,6 +1544,7 @@ function toggleCfg(key,elId){
 const dys=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],mths=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const n=new Date();
 document.getElementById('homeDate').textContent=`${dys[n.getDay()]} ${n.getDate()} ${mths[n.getMonth()]} ${n.getFullYear()}`;
+document.querySelector('.bottom-nav').style.display='none';
 updateScore();
 </script>
 </body>
