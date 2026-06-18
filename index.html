@@ -269,6 +269,26 @@ body.light{
 .real-add-btn:active{opacity:.8}
 .real-status{padding:10px;text-align:center;font-size:12px;color:var(--text3)}
 
+/* PLAN vs REAL */
+.plan-summary-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:14px}
+.plan-summary-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.plan-meal-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.plan-meal-row:last-child{border-bottom:none}
+.plan-meal-time{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);background:rgba(232,255,71,.08);padding:2px 6px;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.plan-meal-name{flex:1;font-size:12px;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-meal-macro{font-family:'Space Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;flex-shrink:0}
+.plan-total-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.plan-total-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.plan-total-val{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--text)}
+.pvr-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:14px}
+.pvr-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.pvr-row{display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:8px;margin-bottom:10px}
+.pvr-row:last-child{margin-bottom:0}
+.pvr-lbl{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.pvr-track{height:8px;background:var(--s3);border-radius:4px;overflow:hidden}
+.pvr-bar{height:100%;border-radius:4px;transition:width .5s ease}
+.pvr-vals{font-family:'Space Mono',monospace;font-size:10px;color:var(--text2);text-align:right;white-space:nowrap}
+
 /* CUSTOM FOODS */
 .custom-content{padding:14px 20px 100px;display:flex;flex-direction:column;gap:10px}
 .custom-new-btn{width:100%;padding:12px;background:rgba(232,255,71,.06);border:1px dashed rgba(232,255,71,.3);border-radius:12px;color:var(--accent);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
@@ -833,7 +853,15 @@ function getKey(sec,key){return load().days[today()]?.[sec]?.[key]}
 
 function calcScore(){
   let s=0;
-  MEALS.forEach(m=>{const v=getKey('meals',m.id);if(v==='done')s+=15;else if(v==='partial')s+=7});
+  const realFoods=['c1','c2','c3'].some(sl=>getSlotFoods(sl).length>0);
+  if(realFoods){
+    const tot=calcDayTotal();
+    const planKcal=MEALS.reduce((a,m)=>a+m.macros.k,0);
+    const planProt=MEALS.reduce((a,m)=>a+m.macros.p,0);
+    s+=Math.round(45*(Math.min(1,tot.kcal/planKcal)*0.4+Math.min(1,tot.prot/planProt)*0.6));
+  }else{
+    MEALS.forEach(m=>{const v=getKey('meals',m.id);if(v==='done')s+=15;else if(v==='partial')s+=7});
+  }
   SUPPLEMENTS.forEach(sp=>{const v=getKey('supps',sp.id);if(v==='g')s+=5;else if(v==='o')s+=2});
   HABITS.forEach(h=>{if(getKey('habits',h.id))s+=5});
   return Math.min(100,s);
@@ -864,8 +892,9 @@ function updateScore(){
   const mp=calcMonthPct();
   const mb=document.getElementById('monthBar');if(mb)mb.style.width=mp+'%';
   const mpEl=document.getElementById('monthPct');if(mpEl)mpEl.textContent=mp;
-  let dDone=0;MEALS.forEach(m=>{if(getKey('meals',m.id)==='done')dDone++});
-  document.getElementById('dietPct').textContent=Math.round(dDone/MEALS.length*100)+'%';
+  const hasReal=['c1','c2','c3'].some(sl=>getSlotFoods(sl).length>0);
+  if(hasReal){const rt=calcDayTotal();const pp=MEALS.reduce((a,m)=>a+m.macros.p,0);document.getElementById('dietPct').textContent=Math.min(100,Math.round(rt.prot/pp*100))+'%';}
+  else{let dDone=0;MEALS.forEach(m=>{if(getKey('meals',m.id)==='done')dDone++});document.getElementById('dietPct').textContent=Math.round(dDone/MEALS.length*100)+'%';}
   let mDone=0;HABITS.forEach(h=>{if(getKey('habits',h.id))mDone++});
   document.getElementById('mindPct').textContent=Math.round(mDone/HABITS.length*100)+'%';
   const d=load();const done=d.sessions?.filter(s=>s.date===today()).length||0;
@@ -1001,25 +1030,56 @@ function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')
 function renderReal(){
   const cont=document.getElementById('realContent');
   if(!cont)return;
-  // Preserve transient input state
   ['c1','c2','c3'].forEach(s=>{
     const si=document.getElementById('rsearch-'+s);if(si)realState.searchVals[s]=si.value;
     const gi=document.getElementById('rgrams-'+s);if(gi)realState.pendingGrams[s]=gi.value;
   });
   cont.className='real-content';
   const tot=calcDayTotal();
-  const kcalPct=Math.min(100,Math.round(tot.kcal/GOALS.kcal*100));
-  const kcalColor=tot.kcal>GOALS.kcal*1.05?'var(--red)':'var(--green)';
-  let h=`<div class="real-total-card">
-    <div class="real-total-title">Total del día</div>
-    <div class="real-macro-grid">
-      <div class="real-macro-cell"><div class="real-macro-val" style="color:var(--accent)">${tot.kcal}</div><div class="real-macro-lbl">Kcal</div><div class="real-macro-target">/ ${GOALS.kcal}</div></div>
-      <div class="real-macro-cell"><div class="real-macro-val" style="color:#a78bfa">${Math.round(tot.prot*10)/10}</div><div class="real-macro-lbl">Prot g</div><div class="real-macro-target">/ ${GOALS.prot}</div></div>
-      <div class="real-macro-cell"><div class="real-macro-val" style="color:var(--blue)">${Math.round(tot.carbs*10)/10}</div><div class="real-macro-lbl">Carbs g</div><div class="real-macro-target">/ ${GOALS.carbs}</div></div>
-      <div class="real-macro-cell"><div class="real-macro-val" style="color:var(--orange)">${Math.round(tot.fat*10)/10}</div><div class="real-macro-lbl">Grasa g</div><div class="real-macro-target">/ ${GOALS.fat}</div></div>
+
+  // Plan totals derived from MEALS data
+  const planKcal=MEALS.reduce((a,m)=>a+m.macros.k,0);
+  const planProt=MEALS.reduce((a,m)=>a+m.macros.p,0);
+  const kcalPct=planKcal>0?Math.min(100,Math.round(tot.kcal/planKcal*100)):0;
+  const protPct=planProt>0?Math.min(100,Math.round(tot.prot/planProt*100)):0;
+  const kcalColor=tot.kcal>planKcal*1.1?'var(--red)':tot.kcal>=planKcal*0.85?'var(--green)':'var(--accent)';
+  const protColor=tot.prot>=planProt*0.85?'var(--green)':tot.prot>=planProt*0.6?'var(--accent)':'var(--red)';
+
+  // Plan summary card
+  let h=`<div class="plan-summary-card">
+    <div class="plan-summary-title">Plan hoy</div>
+    ${MEALS.map(m=>`<div class="plan-meal-row">
+      <span class="plan-meal-time">${m.time.split('–')[0].trim()}</span>
+      <span class="plan-meal-name">${m.name.split('—')[0].trim()}</span>
+      <span class="plan-meal-macro">${m.macros.k} kcal · ${m.macros.p}g P</span>
+    </div>`).join('')}
+    <div class="plan-total-row">
+      <span class="plan-total-lbl">Total plan</span>
+      <span class="plan-total-val">${planKcal} kcal · ${planProt}g prot</span>
     </div>
-    <div class="real-progress-bar"><div class="real-progress-fill" style="width:${kcalPct}%;background:${kcalColor}"></div></div>
   </div>`;
+
+  // Plan vs Real comparison card
+  h+=`<div class="pvr-card">
+    <div class="pvr-title">Plan vs Real</div>
+    <div class="pvr-row">
+      <span class="pvr-lbl">Kcal</span>
+      <div class="pvr-track"><div class="pvr-bar" style="width:${kcalPct}%;background:${kcalColor}"></div></div>
+      <span class="pvr-vals">${tot.kcal} / ${planKcal} · ${kcalPct}%</span>
+    </div>
+    <div class="pvr-row">
+      <span class="pvr-lbl">Prot</span>
+      <div class="pvr-track"><div class="pvr-bar" style="width:${protPct}%;background:${protColor}"></div></div>
+      <span class="pvr-vals">${Math.round(tot.prot*10)/10}g / ${planProt}g · ${protPct}%</span>
+    </div>
+  </div>`;
+
+  // Real food logging slots (named to match the plan meals)
+  const slotMeta=[
+    {name:'Post-entreno',time:'14:00'},
+    {name:'Batido',time:'17:00'},
+    {name:'Cena',time:'18:30'}
+  ];
 
   ['c1','c2','c3'].forEach((slot,i)=>{
     const foods=getSlotFoods(slot);
@@ -1062,7 +1122,7 @@ function renderReal(){
 
     h+=`<div class="real-slot-card">
       <div class="real-slot-head" onclick="toggleRealSlot('${slot}')">
-        <span class="real-slot-name">Comida ${i+1}</span>
+        <span class="real-slot-name">${slotMeta[i].name} <span style="font-size:10px;color:var(--text3)">${slotMeta[i].time}</span></span>
         <span class="real-slot-kcal">${m.kcal>0?m.kcal+' kcal':'—'}</span>
       </div>
       <div class="real-slot-body${isOpen?'':' hidden'}" id="rsb-${slot}">
