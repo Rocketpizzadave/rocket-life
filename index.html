@@ -258,6 +258,7 @@ body.light{
 .real-results{margin-top:8px;display:flex;flex-direction:column;gap:5px}
 .real-result-item{padding:9px 11px;background:var(--s2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s}
 .real-result-item.sel,.real-result-item:active{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.4)}
+.real-result-item.custom-result{background:rgba(232,255,71,.04);border-color:rgba(232,255,71,.2)}
 .real-result-name{font-size:13px;font-weight:500;line-height:1.3}
 .real-result-meta{font-size:11px;color:var(--text2);margin-top:2px;font-family:'Space Mono',monospace}
 .real-add-row{display:flex;gap:8px;align-items:center;margin-top:8px;padding:10px 12px;background:rgba(232,255,71,.05);border:1px solid rgba(232,255,71,.2);border-radius:10px;flex-wrap:wrap}
@@ -267,6 +268,26 @@ body.light{
 .real-add-btn{padding:7px 14px;background:var(--accent);border:none;border-radius:8px;color:var(--bg);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
 .real-add-btn:active{opacity:.8}
 .real-status{padding:10px;text-align:center;font-size:12px;color:var(--text3)}
+
+/* CUSTOM FOODS */
+.custom-content{padding:14px 20px 100px;display:flex;flex-direction:column;gap:10px}
+.custom-new-btn{width:100%;padding:12px;background:rgba(232,255,71,.06);border:1px dashed rgba(232,255,71,.3);border-radius:12px;color:var(--accent);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.custom-new-btn:active{background:rgba(232,255,71,.14)}
+.custom-add-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px}
+.custom-add-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.custom-inp{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:9px 12px;-webkit-appearance:none;margin-bottom:10px}
+.custom-inp:focus{outline:none;border-color:var(--purple)}
+.custom-macro-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+.custom-macro-field label{display:block;font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.custom-inp-sm{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:13px;font-weight:700;text-align:center;padding:6px 2px;-webkit-appearance:none}
+.custom-inp-sm:focus{outline:none;border-color:var(--purple)}
+.custom-add-btns{display:flex;gap:8px}
+.custom-cancel-btn{flex:1;padding:9px;background:none;border:1px solid var(--border);border-radius:9px;color:var(--text2);font-family:inherit;font-size:13px;cursor:pointer}
+.custom-save-btn{flex:2;padding:9px;background:var(--accent);border:none;border-radius:9px;color:var(--bg);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.custom-item{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:12px}
+.custom-item-info{flex:1;min-width:0}
+.custom-item-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.custom-item-macros{font-size:11px;color:var(--text2);margin-top:2px;font-family:'Space Mono',monospace}
 
 /* SCAN MODAL */
 #scan-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:900;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px}
@@ -521,10 +542,12 @@ body.light{
     <div class="diet-mode-toggle">
       <button class="diet-mode-btn active" id="btnPlan" onclick="setDietMode('plan')">Plan</button>
       <button class="diet-mode-btn" id="btnReal" onclick="setDietMode('real')">Real</button>
+      <button class="diet-mode-btn" id="btnCustom" onclick="setDietMode('custom')">Mis prod.</button>
     </div>
   </div>
   <div id="planMode"><div class="diet-content" id="dietContent"></div></div>
   <div id="realMode" style="display:none"><div id="realContent"></div></div>
+  <div id="customMode" style="display:none"><div id="customContent"></div></div>
 </div>
 
 <!-- TRAIN -->
@@ -916,9 +939,12 @@ function setDietMode(mode){
   realState.mode=mode;
   document.getElementById('planMode').style.display=mode==='plan'?'block':'none';
   document.getElementById('realMode').style.display=mode==='real'?'block':'none';
+  document.getElementById('customMode').style.display=mode==='custom'?'block':'none';
   document.getElementById('btnPlan').classList.toggle('active',mode==='plan');
   document.getElementById('btnReal').classList.toggle('active',mode==='real');
+  document.getElementById('btnCustom').classList.toggle('active',mode==='custom');
   if(mode==='real')renderReal();
+  if(mode==='custom')renderCustomMode();
 }
 
 function getRealDay(){
@@ -1002,7 +1028,7 @@ function renderReal(){
       const rk=Math.round(n['energy-kcal_100g']||n['energy-kcal']||(n['energy_100g']||0)/4.184||0);
       const rp=Math.round((n.proteins_100g||0)*10)/10;
       const isSel=sel&&sel._idx===ri;
-      return`<div class="real-result-item${isSel?' sel':''}" onclick="selectResult('${slot}',${ri})">
+      return`<div class="real-result-item${isSel?' sel':''}${p._custom?' custom-result':''}" onclick="selectResult('${slot}',${ri})">
         <div class="real-result-name">${escH(p.product_name||'Sin nombre')}</div>
         <div class="real-result-meta">${escH(p.brands||'')} · ${rk} kcal/100g · ${rp}g prot</div>
       </div>`;
@@ -1052,19 +1078,25 @@ async function searchFood(slot){
   const cont=document.getElementById('rres-'+slot);
   if(cont)cont.innerHTML='<div class="real-status">Buscando…</div>';
   delete realState.selected[slot];
+  const customMatches=loadCustomFoods()
+    .filter(f=>f.name.toLowerCase().includes(q.toLowerCase()))
+    .map(f=>({product_name:f.name,brands:'★ Personalizado',_custom:true,
+      nutriments:{'energy-kcal_100g':f.kcal100,proteins_100g:f.prot100,
+        carbohydrates_100g:f.carbs100,fat_100g:f.fat100}}));
   try{
-    const r=await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&lc=es&cc=es&page_size=10');
+    const r=await fetch('https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(q)+'&search_simple=1&action=process&json=1&fields=product_name,brands,nutriments,image_url&page_size=10');
     const data=await r.json();
     const prods=(data.products||[]).filter(p=>p.product_name&&p.nutriments&&
       (p.nutriments['energy-kcal_100g']||p.nutriments['energy-kcal']||p.nutriments['energy_100g']));
-    realState.results[slot]=prods;
-    if(!prods.length){
+    realState.results[slot]=[...customMatches,...prods];
+    if(!realState.results[slot].length){
       if(cont)cont.innerHTML='<div class="real-status">Sin resultados con datos nutricionales</div>';
       return;
     }
     renderReal();
   }catch(e){
-    if(cont)cont.innerHTML='<div class="real-status">Error de red. Inténtalo de nuevo.</div>';
+    if(customMatches.length){realState.results[slot]=customMatches;renderReal();}
+    else if(cont)cont.innerHTML='<div class="real-status">Error de red. Inténtalo de nuevo.</div>';
   }
 }
 
@@ -1185,6 +1217,80 @@ async function lookupBarcode(barcode,slot){
       setTimeout(()=>{const g=document.getElementById('rgrams-'+slot);if(g){g.focus();g.select();}},100);
     }else{showToast('Producto no encontrado','or');}
   }catch(e){showToast('Error al buscar producto','or');}
+}
+
+// ═══ CUSTOM FOODS ═══
+
+const CUSTOM_KEY='rl_custom';
+function loadCustomFoods(){try{return JSON.parse(localStorage.getItem(CUSTOM_KEY))||[]}catch{return[]}}
+function saveCustomFoods(foods){localStorage.setItem(CUSTOM_KEY,JSON.stringify(foods))}
+
+function renderCustomMode(){
+  const cont=document.getElementById('customContent');
+  if(!cont)return;
+  const foods=loadCustomFoods();
+  let h='<div class="custom-content">';
+  h+=`<div class="custom-add-card" id="customAddCard" style="display:none">
+    <div class="custom-add-title">Nuevo producto</div>
+    <input type="text" class="custom-inp" id="cfName" placeholder="Nombre del producto" autocomplete="off">
+    <div class="custom-macro-row">
+      <div class="custom-macro-field"><label>Kcal/100g</label><input type="number" class="custom-inp-sm" id="cfKcal" inputmode="decimal" placeholder="0"></div>
+      <div class="custom-macro-field"><label>Prot g</label><input type="number" class="custom-inp-sm" id="cfProt" inputmode="decimal" placeholder="0"></div>
+      <div class="custom-macro-field"><label>Carbs g</label><input type="number" class="custom-inp-sm" id="cfCarbs" inputmode="decimal" placeholder="0"></div>
+      <div class="custom-macro-field"><label>Grasa g</label><input type="number" class="custom-inp-sm" id="cfFat" inputmode="decimal" placeholder="0"></div>
+    </div>
+    <div class="custom-add-btns">
+      <button class="custom-cancel-btn" onclick="hideAddCustomForm()">Cancelar</button>
+      <button class="custom-save-btn" onclick="saveCustomFood()">Guardar producto</button>
+    </div>
+  </div>`;
+  h+=`<button class="custom-new-btn" id="customNewBtn" onclick="showAddCustomForm()">+ Añadir producto personalizado</button>`;
+  if(!foods.length){
+    h+='<div class="real-status">Sin productos personalizados. Añade tus alimentos habituales para encontrarlos rápido.</div>';
+  }else{
+    h+=foods.map((f,i)=>`
+      <div class="custom-item">
+        <div class="custom-item-info">
+          <div class="custom-item-name">${escH(f.name)}</div>
+          <div class="custom-item-macros">${f.kcal100} kcal · ${f.prot100}g prot · ${f.carbs100}g carbs · ${f.fat100}g grasa</div>
+        </div>
+        <button class="real-food-del" onclick="deleteCustomFood(${i})">✕</button>
+      </div>`).join('');
+  }
+  h+='</div>';
+  cont.innerHTML=h;
+}
+
+function showAddCustomForm(){
+  document.getElementById('customAddCard').style.display='block';
+  document.getElementById('customNewBtn').style.display='none';
+  setTimeout(()=>document.getElementById('cfName')?.focus(),60);
+}
+function hideAddCustomForm(){
+  document.getElementById('customAddCard').style.display='none';
+  document.getElementById('customNewBtn').style.display='block';
+}
+
+function saveCustomFood(){
+  const name=(document.getElementById('cfName')?.value||'').trim();
+  if(!name){showToast('Escribe un nombre','or');return;}
+  const kcal100=Math.round(parseFloat(document.getElementById('cfKcal')?.value)||0);
+  const prot100=parseFloat(document.getElementById('cfProt')?.value)||0;
+  const carbs100=parseFloat(document.getElementById('cfCarbs')?.value)||0;
+  const fat100=parseFloat(document.getElementById('cfFat')?.value)||0;
+  const foods=loadCustomFoods();
+  foods.push({name,kcal100,prot100,carbs100,fat100});
+  saveCustomFoods(foods);
+  showToast('✅ Producto guardado');
+  renderCustomMode();
+}
+
+function deleteCustomFood(idx){
+  const foods=loadCustomFoods();
+  foods.splice(idx,1);
+  saveCustomFoods(foods);
+  renderCustomMode();
+  showToast('Producto eliminado','or');
 }
 
 // ═══ TRAIN ═══
