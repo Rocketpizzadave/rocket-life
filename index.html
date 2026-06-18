@@ -23,7 +23,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .screen.active{display:flex}
 
 /* HOME — REDESIGNED */
-#home{position:fixed;inset:0;overflow:hidden;background:#05050e}
+#home{position:fixed;inset:0;overflow:hidden;background:#03030a}
 
 #starfield{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 
@@ -32,14 +32,22 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   left:50%;transform:translateX(-50%);
   bottom:-8px;
   height:90vh;width:auto;
-  opacity:0.78;
+  opacity:0.38;
   pointer-events:none;
-  filter:drop-shadow(0 0 55px rgba(139,92,246,.5)) drop-shadow(0 0 120px rgba(139,92,246,.18));
+  filter:drop-shadow(0 0 40px rgba(139,92,246,.3));
   z-index:1;
 }
 
+.home-vignette{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 55%,transparent 18%,rgba(3,3,10,.72) 100%),
+    linear-gradient(to top,rgba(3,3,10,.97) 0%,transparent 38%),
+    linear-gradient(to bottom,rgba(3,3,10,.55) 0%,transparent 22%);
+}
+
 .home-content{
-  position:absolute;inset:0;z-index:2;
+  position:absolute;inset:0;z-index:3;
   display:flex;flex-direction:column;align-items:center;
   justify-content:space-between;
   padding:52px 22px 36px;
@@ -57,16 +65,15 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .logo-date{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-top:5px}
 
 /* Hero buttons row */
-.hero-btns{display:flex;gap:12px;width:100%}
+.hero-btns{display:flex;gap:12px;justify-content:center}
 
 .hero-btn{
-  flex:1;
-  aspect-ratio:1/1;
-  border-radius:22px;
+  width:74px;height:74px;flex:none;
+  border-radius:16px;
   border:1px solid;
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:5px;cursor:pointer;font-family:inherit;
+  gap:4px;cursor:pointer;font-family:inherit;
   transition:transform .15s;
   -webkit-tap-highlight-color:transparent;
   background:none;
@@ -77,12 +84,12 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 .btn-train{background:rgba(249,115,22,.16);border-color:rgba(249,115,22,.45)}
 .btn-mind{background:rgba(56,189,248,.16);border-color:rgba(56,189,248,.45)}
 
-.btn-icon{font-size:27px;line-height:1}
-.btn-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.btn-icon{font-size:20px;line-height:1}
+.btn-label{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .btn-diet .btn-label{color:#4ade80}
 .btn-train .btn-label{color:#fb923c}
 .btn-mind .btn-label{color:#38bdf8}
-.btn-pct{font-family:'Space Mono',monospace;font-size:14px;font-weight:700}
+.btn-pct{font-family:'Space Mono',monospace;font-size:11px;font-weight:700}
 .btn-diet .btn-pct{color:rgba(74,222,128,.9)}
 .btn-train .btn-pct{color:rgba(251,146,60,.9)}
 .btn-mind .btn-pct{color:rgba(56,189,248,.9)}
@@ -90,24 +97,24 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 /* Home footer */
 .home-footer{width:100%;display:flex;align-items:flex-end;gap:14px}
 .day-progress{flex:1}
-.day-progress-label{
+.day-progress-row{
   display:flex;justify-content:space-between;align-items:baseline;
-  font-size:10px;color:rgba(255,255,255,.35);
-  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;
+  font-size:9px;color:rgba(255,255,255,.35);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;
 }
+.day-progress-lbl{font-weight:700}
 .day-progress-score{
-  font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--accent);
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--accent);
 }
 .day-progress-track{
   height:4px;background:rgba(255,255,255,.08);
-  border-radius:2px;overflow:hidden;margin-bottom:5px;
+  border-radius:2px;overflow:hidden;
 }
 .day-progress-fill{
   height:100%;
   background:linear-gradient(90deg,var(--purple),var(--accent));
   border-radius:2px;transition:width .5s ease;width:0%;
 }
-.day-progress-msg{font-size:11px;color:rgba(255,255,255,.25)}
 
 .settings-btn{
   width:48px;height:48px;border-radius:50%;flex-shrink:0;
@@ -395,6 +402,7 @@ body.light{
 <!-- HOME -->
 <div id="home" class="screen active">
   <img class="rocket-hero" src="rocket.png" alt="">
+  <div class="home-vignette"></div>
   <div class="home-content">
     <div class="home-logo">
       <div class="logo-text">ROCKET<span>LIFE</span></div>
@@ -419,14 +427,20 @@ body.light{
     </div>
     <div class="home-footer">
       <div class="day-progress">
-        <div class="day-progress-label">
-          <span>Progreso del día</span>
+        <div class="day-progress-row">
+          <span class="day-progress-lbl">HOY</span>
           <span class="day-progress-score"><span id="scoreNum">0</span>/100</span>
         </div>
         <div class="day-progress-track">
           <div class="day-progress-fill" id="scoreBar"></div>
         </div>
-        <div class="day-progress-msg" id="scoreMsg">Empieza el día. Tómate el café.</div>
+        <div class="day-progress-row" style="margin-top:8px">
+          <span class="day-progress-lbl">MES</span>
+          <span class="day-progress-score"><span id="monthPct">0</span>%</span>
+        </div>
+        <div class="day-progress-track">
+          <div class="day-progress-fill" id="monthBar"></div>
+        </div>
       </div>
       <button class="settings-btn" onclick="openConfig()">⚙️</button>
     </div>
@@ -782,16 +796,31 @@ function calcScore(){
   return Math.min(100,s);
 }
 
+function calcMonthPct(){
+  const d=load(),n=new Date(),yr=n.getFullYear(),mo=n.getMonth();
+  const elapsed=n.getDate();
+  let done=0;
+  for(let i=1;i<=elapsed;i++){
+    const date=`${yr}-${String(mo+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+    const day=d.days[date];
+    if(day){
+      if(Object.values(day.meals||{}).some(v=>v==='done'||v==='partial'))done++;
+      else if(Object.values(day.habits||{}).some(v=>v===true))done++;
+      else if(Object.values(day.supps||{}).some(v=>v==='g'||v==='o'))done++;
+    }
+  }
+  return Math.round(done/elapsed*100);
+}
+
 function updateScore(){
   const s=calcScore();
   document.getElementById('scoreNum').textContent=s;
   document.getElementById('scoreBar').style.width=s+'%';
-  // Animate SVG ring (circumference = 2π×30 ≈ 188.5)
   const ring=document.getElementById('ringPath');
   if(ring)ring.style.strokeDashoffset=188.5-(188.5*(s/100));
-  const msgs=[[0,'Empieza el día. Tómate el café.'],[20,'Arrancando. No pares.'],[40,'Buen progreso.'],[60,'Más de la mitad.'],[80,'Casi perfecto. Último empujón.'],[95,'🔥 Día de 10. Esto es consistencia.']];
-  let msg=msgs[0][1];for(const[t,tx]of msgs){if(s>=t)msg=tx;}
-  document.getElementById('scoreMsg').textContent=msg;
+  const mp=calcMonthPct();
+  const mb=document.getElementById('monthBar');if(mb)mb.style.width=mp+'%';
+  const mpEl=document.getElementById('monthPct');if(mpEl)mpEl.textContent=mp;
   let dDone=0;MEALS.forEach(m=>{if(getKey('meals',m.id)==='done')dDone++});
   document.getElementById('dietPct').textContent=Math.round(dDone/MEALS.length*100)+'%';
   let mDone=0;HABITS.forEach(h=>{if(getKey('habits',h.id))mDone++});
@@ -1476,7 +1505,7 @@ function showToast(msg,type=''){
 
   function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
   function mkStar(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.2,a:Math.random(),da:(.002+Math.random()*.003)*(Math.random()<.5?1:-1),s:Math.random()*.3+.1};}
-  function init(){resize();stars=Array.from({length:120},mkStar);}
+  function init(){resize();stars=Array.from({length:280},mkStar);}
 
   function draw(){
     if(!active){cancelAnimationFrame(animId);return;}
