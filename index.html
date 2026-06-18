@@ -648,6 +648,19 @@ body.light{
   <button class="scan-close-btn" onclick="closeScan()">✕ Cerrar</button>
 </div>
 
+<!-- API KEY MODAL -->
+<div id="apikey-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:950;align-items:center;justify-content:center;padding:24px">
+  <div style="background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:22px 20px;width:100%;max-width:340px">
+    <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Anthropic API Key</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5">Necesaria para analizar etiquetas con IA. Se guarda solo en tu dispositivo.</div>
+    <input type="password" id="apikeyInput" class="custom-inp" placeholder="sk-ant-…" autocomplete="off" style="margin-bottom:14px" onkeydown="if(event.key==='Enter')confirmApiKey()">
+    <div style="display:flex;gap:8px">
+      <button class="custom-cancel-btn" onclick="cancelApiKey()">Cancelar</button>
+      <button class="custom-save-btn" onclick="confirmApiKey()">Guardar y escanear</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAV -->
 <div class="bottom-nav">
   <button class="nav-item active" onclick="showScreen('home',this)"><div class="nav-icon">🚀</div>Inicio</button>
@@ -1305,14 +1318,31 @@ function deleteCustomFood(idx){
   showToast('Producto eliminado','or');
 }
 
+let _pendingLabelFile=null;
+
+function cancelApiKey(){
+  document.getElementById('apikey-modal').style.display='none';
+  _pendingLabelFile=null;
+  const inp=document.getElementById('cfImgInput');if(inp)inp.value='';
+}
+
+async function confirmApiKey(){
+  const key=(document.getElementById('apikeyInput')?.value||'').trim();
+  if(!key){showToast('Ingresa la API key','or');return;}
+  localStorage.setItem('anthropic_key',key);
+  document.getElementById('apikey-modal').style.display='none';
+  if(_pendingLabelFile){const f=_pendingLabelFile;_pendingLabelFile=null;await analyzeLabel(f);}
+}
+
 async function analyzeLabel(file){
   if(!file)return;
-  const cfg=loadCfg();
-  let apiKey=(cfg.anthropicKey||'').trim();
+  const apiKey=(localStorage.getItem('anthropic_key')||'').trim();
   if(!apiKey){
-    apiKey=(prompt('Ingresa tu Anthropic API key para escanear etiquetas:','')||'').trim();
-    if(!apiKey)return;
-    saveCfgVal('anthropicKey',apiKey);
+    _pendingLabelFile=file;
+    document.getElementById('apikey-modal').style.display='flex';
+    document.getElementById('apikeyInput').value='';
+    setTimeout(()=>document.getElementById('apikeyInput')?.focus(),80);
+    return;
   }
   const btn=document.getElementById('cfScanBtn');
   const spinner=document.getElementById('cfSpinner');
