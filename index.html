@@ -413,6 +413,13 @@ body.light{
 .prev-best{margin-bottom:7px;font-size:11px;color:var(--accent);background:rgba(232,255,71,.06);padding:5px 9px;border-radius:7px}
 .game-timer-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--s2);color:var(--text2);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .game-timer-btn:active{background:var(--purple);color:#fff}
+/* LABEL SCAN */
+.custom-scan-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.custom-scan-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.4);border-radius:10px;color:var(--purple);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.custom-scan-btn:active{background:rgba(139,92,246,.25)}
+.custom-scan-btn:disabled{opacity:.5;cursor:default}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cf-spinner{width:18px;height:18px;border:2px solid rgba(139,92,246,.3);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -1233,6 +1240,11 @@ function renderCustomMode(){
   h+=`<div class="custom-add-card" id="customAddCard" style="display:none">
     <div class="custom-add-title">Nuevo producto</div>
     <input type="text" class="custom-inp" id="cfName" placeholder="Nombre del producto" autocomplete="off">
+    <div class="custom-scan-row">
+      <button class="custom-scan-btn" id="cfScanBtn" onclick="document.getElementById('cfImgInput').click()">📷 Escanear etiqueta</button>
+      <div class="cf-spinner" id="cfSpinner" style="display:none"></div>
+      <input type="file" id="cfImgInput" accept="image/*" capture="environment" style="display:none" onchange="analyzeLabel(this.files[0])">
+    </div>
     <div class="custom-macro-row">
       <div class="custom-macro-field"><label>Kcal/100g</label><input type="number" class="custom-inp-sm" id="cfKcal" inputmode="decimal" placeholder="0"></div>
       <div class="custom-macro-field"><label>Prot g</label><input type="number" class="custom-inp-sm" id="cfProt" inputmode="decimal" placeholder="0"></div>
@@ -1291,6 +1303,65 @@ function deleteCustomFood(idx){
   saveCustomFoods(foods);
   renderCustomMode();
   showToast('Producto eliminado','or');
+}
+
+async function analyzeLabel(file){
+  if(!file)return;
+  const cfg=loadCfg();
+  let apiKey=(cfg.anthropicKey||'').trim();
+  if(!apiKey){
+    apiKey=(prompt('Ingresa tu Anthropic API key para escanear etiquetas:','')||'').trim();
+    if(!apiKey)return;
+    saveCfgVal('anthropicKey',apiKey);
+  }
+  const btn=document.getElementById('cfScanBtn');
+  const spinner=document.getElementById('cfSpinner');
+  if(btn)btn.disabled=true;
+  if(spinner)spinner.style.display='block';
+  try{
+    const b64=await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=e=>res(e.target.result.split(',')[1]);
+      r.onerror=rej;
+      r.readAsDataURL(file);
+    });
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'content-type':'application/json',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:256,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:b64}},
+            {type:'text',text:'Extract the nutrition facts from this food label. Return ONLY a JSON object with these fields: kcal100 (kcal per 100g), prot100 (protein g per 100g), carbs100 (carbohydrates g per 100g), fat100 (fat g per 100g). If a value is not found, use 0. Return only the JSON, no other text.'}
+          ]
+        }]
+      })
+    });
+    if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+resp.status)}
+    const data=await resp.json();
+    const txt=data.content?.[0]?.text||'';
+    const match=txt.match(/\{[\s\S]*\}/);
+    if(!match)throw new Error('No JSON en respuesta');
+    const vals=JSON.parse(match[0]);
+    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v??0};
+    set('cfKcal',vals.kcal100);set('cfProt',vals.prot100);set('cfCarbs',vals.carbs100);set('cfFat',vals.fat100);
+    showToast('✅ Etiqueta analizada');
+  }catch(e){
+    showToast('Error: '+e.message,'or');
+  }finally{
+    if(btn)btn.disabled=false;
+    if(spinner)spinner.style.display='none';
+    const inp=document.getElementById('cfImgInput');
+    if(inp)inp.value='';
+  }
 }
 
 // ═══ TRAIN ═══
