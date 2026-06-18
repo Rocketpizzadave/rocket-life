@@ -1676,6 +1676,7 @@ function toggleCfg(key,elId){
 })();
 
 // ═══ INIT ═══
+if(navigator.storage?.persist)navigator.storage.persist();
 const dys=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],mths=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const n=new Date();
 document.getElementById('homeDate').textContent=`${dys[n.getDay()]} ${n.getDate()} ${mths[n.getMonth()]} ${n.getFullYear()}`;
